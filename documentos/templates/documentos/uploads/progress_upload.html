@@ -1,0 +1,434 @@
+{% extends 'documentos/base.html' %}
+
+{% block title %}Upload con Progreso - Django Demo{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h4 class="mb-0">📊 Upload con Barra de Progreso</h4>
+                    <p class="mb-0">Handler personalizado con feedback en tiempo real</p>
+                </div>
+                <div class="card-body">
+                    <div class="explanation">
+                        <h5>🔍 Qué demuestra este ejemplo:</h5>
+                        <ul>
+                            <li><code>ProgressBarUploadHandler</code> - Handler personalizado para progreso</li>
+                            <li><code>request.upload_handlers</code> - Modificación de handlers en tiempo de ejecución</li>
+                            <li><code>@csrf_exempt</code> y <code>@csrf_protect</code> - Manejo de CSRF con handlers</li>
+                            <li>Feedback AJAX en tiempo real</li>
+                            <li>Tracking de progreso de subida</li>
+                        </ul>
+                    </div>
+
+                    <div class="progress-container" id="progressContainer" style="display: none;">
+                        <div class="upload-progress">
+                            <div class="progress-header">
+                                <h6>📤 Subiendo archivo...</h6>
+                                <span class="progress-percent" id="progressPercent">0%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                     id="progressBar" role="progressbar" style="width: 0%">
+                                </div>
+                            </div>
+                            <div class="progress-info" id="progressInfo">
+                                <small class="text-muted">Preparando...</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form method="post" enctype="multipart/form-data" class="upload-form" id="uploadForm">
+                        {% csrf_token %}
+                        <input type="hidden" name="progress_id" value="{{ progress_id }}">
+                        
+                        <div class="form-group">
+                            {{ form.title.errors }}
+                            <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+                            {{ form.title }}
+                            <small class="form-text text-muted">{{ form.title.help_text }}</small>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.file.errors }}
+                            <label for="{{ form.file.id_for_label }}">{{ form.file.label }}</label>
+                            {{ form.file }}
+                            <small class="form-text text-muted">{{ form.file.help_text }}</small>
+                        </div>
+
+                        <button type="submit" class="btn btn-dark btn-lg" id="submitBtn">
+                            <i class="fas fa-upload"></i> Subir con Progreso
+                        </button>
+                        
+                        <a href="{% url 'documentos:upload_index' %}" class="btn btn-secondary btn-lg ml-2">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                    </form>
+
+                    <div class="code-example mt-4">
+                        <h5>💻 Código Python del Handler:</h5>
+                        <pre><code class="python">class ProgressBarUploadHandler(MemoryFileUploadHandler):
+    def __init__(self, request=None):
+        super().__init__(request)
+        self.progress_id = request.GET.get('progress_id')
+    
+    def new_file(self, *args, **kwargs):
+        super().new_file(*args, **kwargs)
+        # Inicializar progreso
+        upload_progress[self.progress_id] = {
+            'uploaded': 0,
+            'total': self.content_length,
+            'percent': 0,
+            'status': 'uploading'
+        }
+    
+    def receive_data_chunk(self, raw_data, start):
+        chunk = super().receive_data_chunk(raw_data, start)
+        # Actualizar progreso
+        progress = upload_progress[self.progress_id]
+        progress['uploaded'] = start + len(raw_data)
+        progress['percent'] = (progress['uploaded'] / progress['total']) * 100
+        return chunk
+
+# Vista con handlers modificados
+@csrf_exempt
+def upload_with_progress(request):
+    if request.method == "POST":
+        # Modificar handlers ANTES de acceder a request.POST
+        request.upload_handlers.insert(0, ProgressBarUploadHandler(request))
+        return _upload_protected(request)
+    
+@csrf_protect
+def _upload_protected(request):
+    # Procesar formulario con CSRF protection</code></pre>
+                    </div>
+
+                    <div class="csrf-warning mt-4">
+                        <h5>⚠️ Importante sobre CSRF:</h5>
+                        <div class="alert alert-warning">
+                            <p><strong>¿Por qué usar @csrf_exempt y @csrf_protect?</strong></p>
+                            <ul>
+                                <li>Los upload handlers deben modificarse <strong>antes</strong> de acceder a <code>request.POST</code></li>
+                                <li><code>CsrfViewMiddleware</code> accede a <code>request.POST</code> automáticamente</li>
+                                <li><code>@csrf_exempt</code> permite modificar handlers sin interferencia del middleware</li>
+                                <li><code>@csrf_protect</code> restaura la protección CSRF en la función de procesamiento</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="technical-flow mt-4">
+                        <h5>🔄 Flujo Técnico:</h5>
+                        <div class="flow-steps">
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h6>Inicio Upload</h6>
+                                    <p>Se genera progress_id único</p>
+                                </div>
+                            </div>
+                            <div class="arrow">→</div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h6>Modificar Handlers</h6>
+                                    <p>Se inserta ProgressBarUploadHandler</p>
+                                </div>
+                            </div>
+                            <div class="arrow">→</div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h6>Chunks Processing</h6>
+                                    <p>Handler actualiza progreso por chunk</p>
+                                </div>
+                            </div>
+                            <div class="arrow">→</div>
+                            <div class="step">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <h6>AJAX Polling</h6>
+                                    <p>Cliente consulta progreso vía AJAX</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('uploadForm');
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBar = document.getElementById('progressBar');
+    const progressPercent = document.getElementById('progressPercent');
+    const progressInfo = document.getElementById('progressInfo');
+    const submitBtn = document.getElementById('submitBtn');
+    const progressId = '{{ progress_id }}';
+    
+    let uploadStarted = false;
+    let progressInterval;
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        if (uploadStarted) return;
+        
+        const fileInput = form.querySelector('input[type="file"]');
+        if (!fileInput.files.length) {
+            alert('Por favor selecciona un archivo');
+            return;
+        }
+
+        startUpload();
+    });
+
+    function startUpload() {
+        uploadStarted = true;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subiendo...';
+        
+        progressContainer.style.display = 'block';
+        
+        // Crear FormData
+        const formData = new FormData(form);
+        
+        // Iniciar polling de progreso
+        progressInterval = setInterval(checkProgress, 500);
+        
+        // Enviar archivo con fetch
+        fetch(window.location.href + '?progress_id=' + progressId, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            clearInterval(progressInterval);
+            
+            if (data.success) {
+                progressBar.style.width = '100%';
+                progressBar.classList.remove('progress-bar-striped', 'progress-bar-animated');
+                progressBar.classList.add('bg-success');
+                progressPercent.textContent = '100%';
+                progressInfo.innerHTML = '<small class="text-success">✅ Upload completado exitosamente</small>';
+                
+                setTimeout(() => {
+                    window.location.href = '/documentos/uploads/success/';
+                }, 1500);
+            } else {
+                showError(data.errors || data.error || 'Error desconocido');
+            }
+        })
+        .catch(error => {
+            clearInterval(progressInterval);
+            showError('Error de conexión: ' + error.message);
+        });
+    }
+
+    function checkProgress() {
+        fetch(`/documentos/uploads/progress/?progress_id=${progressId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) return;
+                
+                const percent = Math.round(data.percent || 0);
+                const uploaded = formatFileSize(data.uploaded || 0);
+                const total = formatFileSize(data.total || 0);
+                const status = data.status || 'uploading';
+                
+                progressBar.style.width = percent + '%';
+                progressPercent.textContent = percent + '%';
+                
+                if (status === 'uploading') {
+                    progressInfo.innerHTML = `<small class="text-muted">📤 ${uploaded} de ${total} subidos</small>`;
+                } else if (status === 'completed') {
+                    progressInfo.innerHTML = '<small class="text-success">✅ Procesando archivo...</small>';
+                }
+            })
+            .catch(error => {
+                console.warn('Error checking progress:', error);
+            });
+    }
+
+    function showError(message) {
+        uploadStarted = false;
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-upload"></i> Subir con Progreso';
+        
+        progressBar.classList.remove('progress-bar-striped', 'progress-bar-animated');
+        progressBar.classList.add('bg-danger');
+        progressInfo.innerHTML = `<small class="text-danger">❌ Error: ${message}</small>`;
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+});
+</script>
+
+<style>
+.upload-form {
+    background: #f8f9fa;
+    padding: 30px;
+    border-radius: 8px;
+    margin: 20px 0;
+    border-left: 4px solid #343a40;
+}
+
+.progress-container {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 25px;
+    margin: 20px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.progress-header h6 {
+    margin: 0;
+    color: #495057;
+}
+
+.progress-percent {
+    font-weight: bold;
+    font-size: 18px;
+    color: #007bff;
+}
+
+.progress {
+    height: 25px;
+    border-radius: 12px;
+    background: #e9ecef;
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    transition: width 0.3s ease;
+    border-radius: 12px;
+}
+
+.progress-info {
+    text-align: center;
+}
+
+.explanation {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #343a40;
+    margin-bottom: 25px;
+}
+
+.code-example {
+    background: #282c34;
+    color: #abb2bf;
+    padding: 20px;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    overflow-x: auto;
+}
+
+.csrf-warning {
+    background: #fff3cd;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #ffc107;
+}
+
+.technical-flow {
+    background: #e8f4f8;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #17a2b8;
+}
+
+.flow-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.step {
+    text-align: center;
+    min-width: 140px;
+}
+
+.step-number {
+    background: #343a40;
+    color: white;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin: 0 auto 8px;
+    font-size: 14px;
+}
+
+.step-content h6 {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.step-content p {
+    font-size: 11px;
+    color: #666;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.arrow {
+    font-size: 20px;
+    color: #343a40;
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .flow-steps {
+        flex-direction: column;
+    }
+    
+    .arrow {
+        transform: rotate(90deg);
+    }
+}
+
+/* Animaciones */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+.progress-container {
+    animation: pulse 2s infinite;
+}
+
+.progress-bar-animated {
+    animation: progress-bar-stripes 1s linear infinite;
+}
+</style>
+{% endblock %}

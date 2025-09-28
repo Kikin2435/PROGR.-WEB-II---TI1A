@@ -1,0 +1,274 @@
+{% extends 'documentos/forms/base_form.html' %}
+
+{% block form_title %}Formulario Dinámico{% endblock %}
+
+{% block form_header %}⚙️ Formulario con Campos Dinámicos{% endblock %}
+
+{% block form_content %}
+<div class="form-explanation">
+    <p>Este formulario demuestra:</p>
+    <ul>
+        <li>Campos que se agregan dinámicamente según parámetros</li>
+        <li>Inicialización personalizada en __init__()</li>
+        <li>Lógica condicional para mostrar/ocultar campos</li>
+        <li>Parámetros URL que afectan el comportamiento del formulario</li>
+    </ul>
+</div>
+
+<div class="mode-switch">
+    <h4>🔧 Modo del Formulario:</h4>
+    {% if show_advanced %}
+        <div class="current-mode advanced">
+            <strong>Modo Avanzado</strong> - Campos adicionales visibles
+            <a href="{% url 'documentos:dynamic_form' %}" class="btn btn-secondary">🔄 Cambiar a Básico</a>
+        </div>
+    {% else %}
+        <div class="current-mode basic">
+            <strong>Modo Básico</strong> - Solo campos esenciales
+            <a href="{% url 'documentos:dynamic_form' %}?advanced=true" class="btn">🔧 Cambiar a Avanzado</a>
+        </div>
+    {% endif %}
+</div>
+
+<form method="post" class="django-form">
+    {% csrf_token %}
+    
+    {% for field in form %}
+        <div class="form-group {% if field.name == 'advanced_field' or field.name == 'color_preference' %}advanced-field{% endif %}">
+            {{ field.errors }}
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.help_text %}
+                <div class="help-text">{{ field.help_text }}</div>
+            {% endif %}
+            
+            {% if field.name == 'basic_field' %}
+                <div class="field-info">
+                    <small>🔹 Este campo está siempre presente</small>
+                </div>
+            {% elif field.name == 'advanced_field' %}
+                <div class="field-info">
+                    <small>⚙️ Este campo solo aparece en modo avanzado</small>
+                </div>
+            {% elif field.name == 'color_preference' %}
+                <div class="field-info">
+                    <small>🎨 Campo adicional del modo avanzado</small>
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+    
+    <div class="form-actions">
+        <button type="submit" class="btn">Procesar Formulario</button>
+        <a href="{% url 'documentos:form_examples' %}" class="btn btn-secondary">Volver</a>
+    </div>
+</form>
+
+<div class="dynamic-info">
+    <h4>📊 Información del Formulario Actual:</h4>
+    <table class="form-info-table">
+        <tr>
+            <td>Modo:</td>
+            <td>{{ show_advanced|yesno:"Avanzado,Básico" }}</td>
+        </tr>
+        <tr>
+            <td>Número de campos:</td>
+            <td>{{ form|length }}</td>
+        </tr>
+        <tr>
+            <td>Campos visibles:</td>
+            <td>
+                {% for field in form.visible_fields %}
+                    <span class="field-name">{{ field.name }}</span>{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+        {% if form.is_bound %}
+        <tr>
+            <td>Estado:</td>
+            <td>{{ form.is_valid|yesno:"Válido,Inválido" }}</td>
+        </tr>
+        {% endif %}
+    </table>
+</div>
+
+<div class="code-demo">
+    <h4>💻 Código del __init__ personalizado:</h4>
+    <pre><code>def __init__(self, *args, **kwargs):
+    show_advanced = kwargs.pop('show_advanced', False)
+    super().__init__(*args, **kwargs)
+    
+    # Campo básico siempre presente
+    self.fields['basic_field'] = forms.CharField(
+        label="Campo básico",
+        max_length=100
+    )
+    
+    # Agregar campos condicionalmente
+    if show_advanced:
+        self.fields['advanced_field'] = forms.CharField(
+            label="Campo avanzado",
+            required=False,
+            help_text="Este campo solo aparece en modo avanzado"
+        )
+        self.fields['color_preference'] = forms.ChoiceField(
+            choices=[('red', 'Rojo'), ('blue', 'Azul'), ('green', 'Verde')],
+            label="Color preferido",
+            required=False
+        )</code></pre>
+</div>
+
+<style>
+.mode-switch {
+    background: #e8f5e8;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+    border-left: 4px solid #4caf50;
+}
+
+.current-mode {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    margin-top: 10px;
+}
+
+.current-mode.advanced {
+    border-left: 4px solid #ff9800;
+}
+
+.current-mode.basic {
+    border-left: 4px solid #2196f3;
+}
+
+.advanced-field {
+    background: #fff8e1;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 15px 0;
+    border-left: 3px solid #ff9800;
+}
+
+.field-info {
+    margin-top: 5px;
+}
+
+.field-info small {
+    color: #666;
+    font-style: italic;
+}
+
+.dynamic-info {
+    background: #f0f8ff;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    border-left: 4px solid #007cba;
+}
+
+.form-info-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.form-info-table td {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+}
+
+.form-info-table td:first-child {
+    background: #f5f5f5;
+    font-weight: bold;
+    width: 200px;
+}
+
+.field-name {
+    background: #e0e0e0;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 12px;
+}
+
+.code-demo {
+    background: #263238;
+    color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.code-demo h4 {
+    color: #81c784;
+    margin-top: 0;
+}
+
+.code-demo pre {
+    margin: 15px 0 0 0;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.4;
+    overflow-x: auto;
+}
+</style>
+{% endblock %}
+
+{% block form_help %}
+<div class="form-help">
+    <h4>🔧 Técnicas Demostradas:</h4>
+    <div class="techniques-grid">
+        <div class="technique">
+            <h5>Inicialización Dinámica</h5>
+            <p>Campos agregados en __init__() según parámetros</p>
+        </div>
+        
+        <div class="technique">
+            <h5>Parámetros URL</h5>
+            <p>?advanced=true cambia el comportamiento del formulario</p>
+        </div>
+        
+        <div class="technique">
+            <h5>kwargs.pop()</h5>
+            <p>Extraer parámetros personalizados antes de super()</p>
+        </div>
+        
+        <div class="technique">
+            <h5>Campos Condicionales</h5>
+            <p>Lógica if para mostrar campos según contexto</p>
+        </div>
+    </div>
+</div>
+
+<style>
+.techniques-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.technique {
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+}
+
+.technique h5 {
+    color: #007cba;
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
+.technique p {
+    font-size: 13px;
+    line-height: 1.4;
+    margin: 0;
+}
+</style>
+{% endblock %}

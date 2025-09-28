@@ -1,0 +1,241 @@
+{% extends 'documentos/base.html' %}
+
+{% block title %}File Uploads - Django Demo{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="hero-section">
+        <h1 class="display-4">📁 Django File Uploads</h1>
+        <p class="lead">Implementación completa de la documentación oficial de Django para manejo de archivos</p>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">📤 Upload Básico</h5>
+                    <p class="card-text">Ejemplo básico usando UploadFileForm y request.FILES</p>
+                    <ul class="list-unstyled">
+                        <li>✓ Manejo con chunks()</li>
+                        <li>✓ Validación de archivos</li>
+                        <li>✓ Almacenamiento seguro</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'documentos:upload_basic' %}" class="btn btn-primary">Probar Upload Básico</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">🗃️ Upload con Modelo</h5>
+                    <p class="card-text">Upload usando ModelForm - guardado automático</p>
+                    <ul class="list-unstyled">
+                        <li>✓ ModelForm integrado</li>
+                        <li>✓ FileField automático</li>
+                        <li>✓ Metadatos en BD</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'documentos:upload_model' %}" class="btn btn-success">Probar con Modelo</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">🔧 Upload Manual</h5>
+                    <p class="card-text">Construcción manual del objeto con archivo</p>
+                    <ul class="list-unstyled">
+                        <li>✓ Control total</li>
+                        <li>✓ Asignación directa</li>
+                        <li>✓ Lógica personalizada</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'documentos:upload_manual' %}" class="btn btn-warning">Probar Manual</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">📋 Upload Múltiple</h5>
+                    <p class="card-text">Subir múltiples archivos con widget personalizado</p>
+                    <ul class="list-unstyled">
+                        <li>✓ MultipleFileField</li>
+                        <li>✓ Widget personalizado</li>
+                        <li>✓ Validación conjunta</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'documentos:upload_multiple' %}" class="btn btn-info">Probar Múltiple</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">🎯 Upload Completo</h5>
+                    <p class="card-text">Formulario con imagen + documento + galería</p>
+                    <ul class="list-unstyled">
+                        <li>✓ ImageField + FileField</li>
+                        <li>✓ Validación específica</li>
+                        <li>✓ Tipos de archivo</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'documentos:upload_complete' %}" class="btn btn-purple">Probar Completo</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">📊 Upload con Progreso</h5>
+                    <p class="card-text">Handler personalizado con barra de progreso</p>
+                    <ul class="list-unstyled">
+                        <li>✓ ProgressBarUploadHandler</li>
+                        <li>✓ Feedback en tiempo real</li>
+                        <li>✓ AJAX progress</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'documentos:upload_progress' %}" class="btn btn-dark">Probar Progreso</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">💾 Upload con Quota</h5>
+                    <p class="card-text">Control de límites por usuario con QuotaUploadHandler</p>
+                    <ul class="list-unstyled">
+                        <li>✓ Límites por usuario</li>
+                        <li>✓ Handler personalizado</li>
+                        <li>✓ Control de espacio</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'documentos:upload_quota' %}" class="btn btn-danger">Probar Quota</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">📚 Documentación</h5>
+                    <p class="card-text">Referencias y conceptos implementados</p>
+                    <ul class="list-unstyled">
+                        <li>📖 UploadedFile.chunks()</li>
+                        <li>📖 Custom Upload Handlers</li>
+                        <li>📖 CSRF Protection</li>
+                        <li>📖 File Storage</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <a href="https://docs.djangoproject.com/en/stable/topics/http/file-uploads/" 
+                       target="_blank" class="btn btn-outline-secondary">Ver Documentación</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <h3>🔧 Conceptos Técnicos Implementados</h3>
+        <div class="row">
+            <div class="col-md-6">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <strong>request.FILES</strong> - Acceso a archivos subidos
+                    </li>
+                    <li class="list-group-item">
+                        <strong>UploadedFile.chunks()</strong> - Lectura eficiente de archivos grandes
+                    </li>
+                    <li class="list-group-item">
+                        <strong>enctype="multipart/form-data"</strong> - Encoding para archivos
+                    </li>
+                    <li class="list-group-item">
+                        <strong>FileField/ImageField</strong> - Campos de modelo para archivos
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <strong>Custom Upload Handlers</strong> - Procesamiento personalizado
+                    </li>
+                    <li class="list-group-item">
+                        <strong>MultipleFileField</strong> - Subida múltiple
+                    </li>
+                    <li class="list-group-item">
+                        <strong>CSRF Protection</strong> - Seguridad en uploads
+                    </li>
+                    <li class="list-group-item">
+                        <strong>File Validation</strong> - Validación de tipo y tamaño
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.btn-purple {
+    background: #6f42c1;
+    color: white;
+    border: none;
+}
+
+.btn-purple:hover {
+    background: #5a359a;
+    color: white;
+}
+
+.card {
+    transition: transform 0.2s;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.card-title {
+    color: #333;
+    font-weight: 600;
+}
+
+.list-group-item {
+    border-left: 3px solid #007bff;
+    margin-bottom: 5px;
+}
+
+.list-group-item strong {
+    color: #007bff;
+}
+</style>
+{% endblock %}

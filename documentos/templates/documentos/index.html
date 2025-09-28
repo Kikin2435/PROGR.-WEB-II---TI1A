@@ -1,0 +1,399 @@
+{% extends 'documentos/base.html' %}
+
+{% block title %}Inicio - Documentos{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <h1>🚀 Django File Handling & Forms Demo</h1>
+    <p class="lead">Implementación completa de la documentación oficial de Django</p>
+</div>
+
+<div class="features-grid">
+    <div class="feature-card">
+        <div class="feature-icon">📝</div>
+        <h3>Working with Forms</h3>
+        <p>Implementación completa de formularios Django con validación, widgets personalizados y manejo de datos.</p>
+        <a href="{% url 'documentos:form_examples' %}" class="btn btn-primary">Explorar Formularios</a>
+    </div>
+    
+    <div class="feature-card">
+        <div class="feature-icon">📁</div>
+        <h3>File Uploads</h3>
+        <p>Todos los ejemplos de la documentación Django para subida de archivos, incluyendo handlers personalizados.</p>
+        <a href="{% url 'documentos:upload_index' %}" class="btn btn-success">Explorar File Uploads</a>
+    </div>
+    
+    <div class="feature-card">
+        <div class="feature-icon">🗃️</div>
+        <h3>File Storage</h3>
+        <p>Demostración de FileField, ImageField y sistemas de almacenamiento personalizados.</p>
+        <a href="{% url 'documentos:car_list' %}" class="btn btn-info">Ver Almacenamiento</a>
+    </div>
+</div>
+
+<div class="stats-section">
+    <h2>📊 Estado del Sistema</h2>
+    <div class="stats-grid">
+        <div class="stat-item">
+            <div class="stat-number">{{ cars.count }}</div>
+            <div class="stat-label">Vehículos</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">{{ documents.count }}</div>
+            <div class="stat-label">Documentos</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">{{ profiles.count }}</div>
+            <div class="stat-label">Perfiles</div>
+        </div>
+    </div>
+</div>
+
+<div class="content-sections">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="section-card">
+                <h3>🚗 Vehículos Recientes</h3>
+                {% if cars %}
+                    {% for car in cars|slice:":3" %}
+                        <div class="item-preview">
+                            <div class="item-info">
+                                <h5><a href="{% url 'documentos:car_detail' car.pk %}">{{ car.name }}</a></h5>
+                                <p class="price">${{ car.price }}</p>
+                            </div>
+                            {% if car.photo %}
+                                <img src="{{ car.photo.url }}" alt="{{ car.name }}" class="item-thumb">
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <div class="section-footer">
+                        <a href="{% url 'documentos:car_list' %}" class="btn btn-outline-primary btn-sm">Ver todos los vehículos</a>
+                    </div>
+                {% else %}
+                    <p class="empty-state">No hay vehículos registrados. <a href="{% url 'documentos:create_car' %}">Agregar el primero</a></p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="section-card">
+                <h3>📄 Documentos Recientes</h3>
+                {% if documents %}
+                    {% for doc in documents|slice:":5" %}
+                        <div class="item-preview">
+                            <div class="item-info">
+                                <h6>{{ doc.title }}</h6>
+                                <small class="text-muted">{{ doc.created_at|date:"d/m/Y H:i" }}</small>
+                            </div>
+                            <a href="{{ doc.file.url }}" target="_blank" class="btn btn-sm btn-outline-secondary">📥</a>
+                        </div>
+                    {% endfor %}
+                    <div class="section-footer">
+                        <a href="{% url 'documentos:create_document' %}" class="btn btn-outline-success btn-sm">Subir documento</a>
+                    </div>
+                {% else %}
+                    <p class="empty-state">No hay documentos. <a href="{% url 'documentos:create_document' %}">Subir el primero</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="django-concepts">
+    <h2>🎯 Conceptos Django Implementados</h2>
+    <div class="concepts-list">
+        <div class="concept-item">
+            <code>FileField</code> - Campos para archivos en modelos
+        </div>
+        <div class="concept-item">
+            <code>ImageField</code> - Campos específicos para imágenes
+        </div>
+        <div class="concept-item">
+            <code>request.FILES</code> - Acceso a archivos subidos
+        </div>
+        <div class="concept-item">
+            <code>UploadedFile.chunks()</code> - Manejo eficiente de archivos grandes
+        </div>
+        <div class="concept-item">
+            <code>Custom Upload Handlers</code> - Procesamiento personalizado de uploads
+        </div>
+        <div class="concept-item">
+            <code>FileSystemStorage</code> - Sistema de almacenamiento personalizado
+        </div>
+        <div class="concept-item">
+            <code>ModelForm</code> - Formularios basados en modelos
+        </div>
+        <div class="concept-item">
+            <code>Form Validation</code> - Validación de formularios y archivos
+        </div>
+    </div>
+</div>
+
+<style>
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 60px 40px;
+    border-radius: 15px;
+    text-align: center;
+    margin-bottom: 40px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.hero-section h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin: 40px 0;
+}
+
+.feature-card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.feature-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.feature-card h3 {
+    color: #333;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.feature-card p {
+    color: #666;
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+.stats-section {
+    background: #f8f9fa;
+    padding: 40px;
+    border-radius: 15px;
+    margin: 40px 0;
+    text-align: center;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.stat-item {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    color: #666;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+.content-sections {
+    margin: 40px 0;
+}
+
+.section-card {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    padding: 25px;
+    height: 100%;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.section-card h3 {
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 600;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 10px;
+}
+
+.item-preview {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.item-preview:last-of-type {
+    border-bottom: none;
+}
+
+.item-info h5, .item-info h6 {
+    margin: 0 0 5px 0;
+    color: #333;
+}
+
+.item-info h5 a, .item-info h6 a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.item-info h5 a:hover, .item-info h6 a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+.price {
+    color: #28a745;
+    font-weight: 600;
+    margin: 0;
+}
+
+.item-thumb {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 2px solid #e9ecef;
+}
+
+.section-footer {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #e9ecef;
+    text-align: center;
+}
+
+.empty-state {
+    color: #6c757d;
+    font-style: italic;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.django-concepts {
+    background: #e8f4f8;
+    padding: 40px;
+    border-radius: 15px;
+    margin: 40px 0;
+    border-left: 5px solid #17a2b8;
+}
+
+.django-concepts h2 {
+    color: #333;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.concepts-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.concept-item {
+    background: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.concept-item code {
+    color: #e83e8c;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 40px 20px;
+    }
+    
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+}
+</style>
+            <p>No hay documentos registrados.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <h3>Perfiles ({{ profiles.count }})</h3>
+        {% if profiles %}
+            <ul>
+                {% for profile in profiles %}
+                    <li>
+                        <strong>{{ profile.username }}</strong>
+                        {% if profile.avatar %}
+                            - <img src="{{ profile.avatar.url }}" alt="Avatar de {{ profile.username }}" style="width: 30px; height: 30px; border-radius: 50%;">
+                        {% endif %}
+                        {% if profile.resume %}
+                            - <a href="{{ profile.resume.url }}" target="_blank">Descargar CV</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No hay perfiles registrados.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="alert alert-info">
+    <h4>Ejemplos de la API de Archivos de Django:</h4>
+    <p>Los modelos implementados demuestran:</p>
+    <ul>
+        <li><code>ImageField</code> y <code>FileField</code> básicos</li>
+        <li>Almacenamiento personalizado con <code>FileSystemStorage</code></li>
+        <li>Callables para selección dinámica de almacenamiento</li>
+        <li>Objetos LazyObject para testing</li>
+    </ul>
+</div>
+{% endblock %}

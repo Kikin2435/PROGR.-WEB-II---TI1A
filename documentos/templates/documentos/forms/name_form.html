@@ -1,0 +1,157 @@
+{% extends 'documentos/forms/base_form.html' %}
+
+{% block form_title %}Formulario de Nombre{% endblock %}
+
+{% block form_header %}📝 Formulario Básico (NameForm){% endblock %}
+
+{% block form_content %}
+<div class="form-explanation">
+    <p>Este es el ejemplo básico de la documentación de Django. Demuestra:</p>
+    <ul>
+        <li>Formulario simple con un campo CharField</li>
+        <li>Validación automática de longitud</li>
+        <li>Manejo de GET (mostrar formulario) y POST (procesar datos)</li>
+        <li>Uso de <code>is_valid()</code> y <code>cleaned_data</code></li>
+    </ul>
+</div>
+
+<form action="{% url 'documentos:name_form' %}" method="post" class="django-form">
+    {% csrf_token %}
+    
+    <!-- Método 1: Renderizado automático completo -->
+    <h4>Método 1: Renderizado automático</h4>
+    <div class="form-method">
+        {{ form.as_p }}
+    </div>
+    
+    <hr>
+    
+    <!-- Método 2: Renderizado manual de campos -->
+    <h4>Método 2: Renderizado manual</h4>
+    <div class="form-method">
+        <div class="form-group">
+            {{ form.your_name.errors }}
+            <label for="{{ form.your_name.id_for_label }}">{{ form.your_name.label }}:</label>
+            {{ form.your_name }}
+            {% if form.your_name.help_text %}
+                <div class="help-text">{{ form.your_name.help_text }}</div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="form-actions">
+        <button type="submit" class="btn">Enviar Nombre</button>
+        <a href="{% url 'documentos:form_examples' %}" class="btn btn-secondary">Volver</a>
+    </div>
+</form>
+
+<!-- Información técnica -->
+<div class="technical-info">
+    <h4>🔍 Información Técnica del Formulario</h4>
+    <ul>
+        <li><strong>Bound:</strong> {{ form.is_bound }}</li>
+        <li><strong>Válido:</strong> {% if form.is_bound %}{{ form.is_valid }}{% else %}N/A (no enviado){% endif %}</li>
+        <li><strong>Errores:</strong> {% if form.errors %}{{ form.errors }}{% else %}Ninguno{% endif %}</li>
+        <li><strong>Datos limpios:</strong> {% if form.is_valid %}{{ form.cleaned_data }}{% else %}N/A{% endif %}</li>
+    </ul>
+</div>
+
+<div class="code-example">
+    <h4>💻 Código de la Vista (views.py)</h4>
+    <pre><code>def get_name(request):
+    if request.method == "POST":
+        form = NameForm(request.POST)  # Formulario vinculado (bound)
+        if form.is_valid():
+            name = form.cleaned_data['your_name']
+            return HttpResponseRedirect("/thanks/")
+    else:
+        form = NameForm()  # Formulario no vinculado (unbound)
+    
+    return render(request, "name.html", {"form": form})</code></pre>
+</div>
+{% endblock %}
+
+{% block form_help %}
+<div class="form-help">
+    <h4>📚 Conceptos Clave:</h4>
+    <div class="concepts">
+        <div class="concept-item">
+            <h5>Formularios Bound vs Unbound</h5>
+            <p><strong>Unbound:</strong> No tiene datos, se muestra vacío<br>
+            <strong>Bound:</strong> Tiene datos enviados, puede validarse</p>
+        </div>
+        
+        <div class="concept-item">
+            <h5>is_valid() y cleaned_data</h5>
+            <p><strong>is_valid():</strong> Ejecuta validación en todos los campos<br>
+            <strong>cleaned_data:</strong> Diccionario con datos validados</p>
+        </div>
+        
+        <div class="concept-item">
+            <h5>Métodos de Renderizado</h5>
+            <p><strong>{{ form }}:</strong> Renderizado completo automático<br>
+            <strong>{{ form.field }}:</strong> Control manual por campo</p>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-explanation {
+    background: #e3f2fd;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 20px 0;
+    border-left: 4px solid #2196f3;
+}
+
+.form-method {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 10px 0;
+}
+
+.technical-info {
+    background: #fff3e0;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 20px 0;
+    border-left: 4px solid #ff9800;
+}
+
+.code-example {
+    background: #263238;
+    color: #fff;
+    padding: 20px;
+    border-radius: 6px;
+    margin: 20px 0;
+}
+
+.code-example pre {
+    margin: 0;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.concepts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.concept-item {
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+}
+
+.concept-item h5 {
+    color: #007cba;
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+</style>
+{% endblock %}

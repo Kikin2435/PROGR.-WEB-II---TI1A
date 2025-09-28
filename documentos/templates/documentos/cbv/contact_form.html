@@ -1,0 +1,118 @@
+{% extends "documentos/cbv/base_cbv.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="form-section">
+            <h2 class="mb-4">📧 Formulario de Contacto</h2>
+            <p class="text-muted mb-4">
+                Ejemplo de <code>FormView</code> - Vista basada en clases para manejar formularios
+            </p>
+
+            <form method="post" id="contact-form">
+                {% csrf_token %}
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ form.name.id_for_label }}" class="form-label">
+                                {{ form.name.label }}
+                            </label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.name.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">
+                                {{ form.email.label }}
+                            </label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.email.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.subject.id_for_label }}" class="form-label">
+                        {{ form.subject.label }}
+                    </label>
+                    {{ form.subject }}
+                    {% if form.subject.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.subject.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.message.id_for_label }}" class="form-label">
+                        {{ form.message.label }}
+                    </label>
+                    {{ form.message }}
+                    {% if form.message.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.message.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="reset" class="btn btn-outline-secondary me-md-2">
+                        🔄 Limpiar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        📤 Enviar Mensaje
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Información sobre FormView -->
+        <div class="card mt-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">💡 Sobre FormView</h5>
+            </div>
+            <div class="card-body">
+                <h6>Características de esta implementación:</h6>
+                <ul class="mb-0">
+                    <li><strong>template_name:</strong> Define el template a usar</li>
+                    <li><strong>form_class:</strong> Especifica la clase del formulario</li>
+                    <li><strong>success_url:</strong> URL de redirección después del éxito</li>
+                    <li><strong>form_valid():</strong> Se ejecuta cuando el formulario es válido</li>
+                    <li><strong>get_context_data():</strong> Añade contexto personalizado</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // AJAX form submission (opcional)
+        $('#contact-form').on('submit', function(e) {
+            // Por defecto usar submit normal
+            // Aquí se podría agregar lógica AJAX si se desea
+        });
+    });
+</script>
+{% endblock %}

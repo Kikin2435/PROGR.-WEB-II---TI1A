@@ -1,0 +1,229 @@
+{% extends 'documentos/base.html' %}
+
+{% block title %}Upload Básico - Django Demo{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">📤 Upload Básico de Archivos</h4>
+                    <p class="mb-0">Implementación exacta de la documentación Django</p>
+                </div>
+                <div class="card-body">
+                    <div class="explanation">
+                        <h5>🔍 Qué demuestra este ejemplo:</h5>
+                        <ul>
+                            <li><code>request.FILES</code> - Acceso a archivos subidos</li>
+                            <li><code>UploadedFile.chunks()</code> - Lectura eficiente de archivos grandes</li>
+                            <li><code>handle_uploaded_file()</code> - Función auxiliar para procesar archivos</li>
+                            <li>Validación de tipo y tamaño de archivo</li>
+                            <li>Almacenamiento seguro con nombres únicos</li>
+                        </ul>
+                    </div>
+
+                    <form method="post" enctype="multipart/form-data" class="upload-form">
+                        {% csrf_token %}
+                        
+                        <div class="form-group">
+                            {{ form.title.errors }}
+                            <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+                            {{ form.title }}
+                            <small class="form-text text-muted">{{ form.title.help_text }}</small>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.file.errors }}
+                            <label for="{{ form.file.id_for_label }}">{{ form.file.label }}</label>
+                            {{ form.file }}
+                            <small class="form-text text-muted">{{ form.file.help_text }}</small>
+                        </div>
+
+                        <div class="file-info" id="fileInfo" style="display: none;">
+                            <div class="alert alert-info">
+                                <strong>Archivo seleccionado:</strong>
+                                <span id="fileName"></span><br>
+                                <strong>Tamaño:</strong>
+                                <span id="fileSize"></span><br>
+                                <strong>Tipo:</strong>
+                                <span id="fileType"></span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-upload"></i> Subir Archivo
+                        </button>
+                        
+                        <a href="{% url 'documentos:upload_index' %}" class="btn btn-secondary btn-lg ml-2">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                    </form>
+
+                    <div class="code-example mt-4">
+                        <h5>💻 Código Python correspondiente:</h5>
+                        <pre><code class="python">def upload_file(request):
+    if request.method == "POST":
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            handle_uploaded_file(request.FILES["file"])
+            return HttpResponseRedirect("/success/url/")
+    else:
+        form = UploadFileForm()
+    return render(request, "upload.html", {"form": form})
+
+def handle_uploaded_file(f):
+    with open("some/file/name.txt", "wb+") as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)</code></pre>
+                    </div>
+
+                    <div class="validation-info mt-4">
+                        <h5>🔒 Validaciones Implementadas:</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <strong>Tamaño máximo:</strong> 10MB
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Extensiones:</strong> .pdf, .doc, .docx, .txt, .jpg, .png
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <strong>Encoding:</strong> multipart/form-data
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>CSRF:</strong> Token de seguridad requerido
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.querySelector('input[type="file"]');
+    const fileInfo = document.getElementById('fileInfo');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    const fileType = document.getElementById('fileType');
+
+    fileInput.addEventListener('change', function(e) {
+        if (e.target.files.length > 0) {
+            const file = e.target.files[0];
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileType.textContent = file.type || 'Desconocido';
+            fileInfo.style.display = 'block';
+        } else {
+            fileInfo.style.display = 'none';
+        }
+    });
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+});
+</script>
+
+<style>
+.upload-form {
+    background: #f8f9fa;
+    padding: 30px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.upload-form input[type="text"] {
+    border: 2px solid #dee2e6;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 16px;
+}
+
+.upload-form input[type="file"] {
+    border: 2px dashed #007bff;
+    border-radius: 8px;
+    padding: 20px;
+    background: #f1f8ff;
+    width: 100%;
+}
+
+.upload-form input[type="file"]:hover {
+    border-color: #0056b3;
+    background: #e3f2fd;
+}
+
+.code-example {
+    background: #282c34;
+    color: #abb2bf;
+    padding: 20px;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    overflow-x: auto;
+}
+
+.code-example pre {
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+.explanation {
+    background: #e8f4f8;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #17a2b8;
+    margin-bottom: 25px;
+}
+
+.file-info {
+    margin: 15px 0;
+}
+
+.btn-lg {
+    padding: 12px 30px;
+    font-size: 16px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.validation-info {
+    background: #fff3cd;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #ffc107;
+}
+
+.list-group-item {
+    border: none;
+    padding: 8px 0;
+    background: transparent;
+}
+
+.alert-info {
+    border-left: 4px solid #17a2b8;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'documentos/forms/base_form.html' %}
+
+{% block form_title %}{{ title }}{% endblock %}
+
+{% block form_header %}📄 {{ title }}{% endblock %}
+
+{% block form_content %}
+<div class="form-explanation">
+    <p>Este formulario demuestra:</p>
+    <ul>
+        <li>ModelForm simple para subir documentos</li>
+        <li>FileField con restricciones de tipo de archivo</li>
+        <li>Placeholders personalizados en widgets</li>
+        <li>Validación automática de archivos</li>
+    </ul>
+</div>
+
+<form method="post" enctype="multipart/form-data" class="django-form">
+    {% csrf_token %}
+    
+    {% for field in form %}
+        <div class="form-group">
+            {{ field.errors }}
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.help_text %}
+                <div class="help-text">{{ field.help_text }}</div>
+            {% endif %}
+        </div>
+    {% endfor %}
+    
+    <div class="form-actions">
+        <button type="submit" class="btn">Subir Documento</button>
+        <a href="{% url 'documentos:index' %}" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+
+<div class="file-types-info">
+    <h4>📎 Tipos de archivo permitidos:</h4>
+    <ul>
+        <li>📄 PDF (.pdf)</li>
+        <li>📝 Word (.doc, .docx)</li>
+        <li>📃 Texto (.txt)</li>
+    </ul>
+</div>
+
+<style>
+.file-types-info {
+    background: #f0f8ff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    border-left: 4px solid #007cba;
+}
+
+.file-types-info h4 {
+    color: #007cba;
+    margin-top: 0;
+}
+
+.file-types-info ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends 'documentos/forms/base_form.html' %}
+
+{% block form_title %}{{ title }}{% endblock %}
+
+{% block form_header %}👤 {{ title }}{% endblock %}
+
+{% block form_content %}
+<div class="form-explanation">
+    <p>Este formulario demuestra:</p>
+    <ul>
+        <li>ModelForm para perfil de usuario</li>
+        <li>ImageField para avatar</li>
+        <li>FileField específico para CV (solo PDF)</li>
+        <li>Validación de unicidad de username</li>
+    </ul>
+</div>
+
+<form method="post" enctype="multipart/form-data" class="django-form">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        {{ form.username.errors }}
+        <label for="{{ form.username.id_for_label }}">{{ form.username.label }}:</label>
+        {{ form.username }}
+        {% if form.username.help_text %}
+            <div class="help-text">{{ form.username.help_text }}</div>
+        {% endif %}
+    </div>
+    
+    <div class="form-group">
+        {{ form.avatar.errors }}
+        <label for="{{ form.avatar.id_for_label }}">{{ form.avatar.label }}:</label>
+        {{ form.avatar }}
+        {% if form.avatar.help_text %}
+            <div class="help-text">{{ form.avatar.help_text }}</div>
+        {% endif %}
+        <div class="help-text">Formatos aceptados: JPG, PNG, GIF</div>
+    </div>
+    
+    <div class="form-group">
+        {{ form.resume.errors }}
+        <label for="{{ form.resume.id_for_label }}">{{ form.resume.label }}:</label>
+        {{ form.resume }}
+        {% if form.resume.help_text %}
+            <div class="help-text">{{ form.resume.help_text }}</div>
+        {% endif %}
+        <div class="help-text">Solo archivos PDF</div>
+    </div>
+    
+    <div class="form-actions">
+        <button type="submit" class="btn">Crear Perfil</button>
+        <a href="{% url 'documentos:index' %}" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+
+<div class="profile-tips">
+    <h4>💡 Consejos para el Perfil:</h4>
+    <ul>
+        <li><strong>Username:</strong> Debe ser único, solo letras, números y guiones</li>
+        <li><strong>Avatar:</strong> Imagen cuadrada recomendada (ej: 400x400px)</li>
+        <li><strong>CV:</strong> Archivo PDF con información profesional</li>
+    </ul>
+</div>
+
+<style>
+.profile-tips {
+    background: #fff8e1;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    border-left: 4px solid #ff9800;
+}
+
+.profile-tips h4 {
+    color: #ff9800;
+    margin-top: 0;
+}
+</style>
+{% endblock %}

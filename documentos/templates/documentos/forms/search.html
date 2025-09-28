@@ -1,0 +1,252 @@
+{% extends 'documentos/forms/base_form.html' %}
+
+{% block form_title %}Búsqueda Avanzada{% endblock %}
+
+{% block form_header %}🔍 Búsqueda Avanzada{% endblock %}
+
+{% block form_content %}
+<div class="form-explanation">
+    <p>Este formulario demuestra:</p>
+    <ul>
+        <li>ChoiceField para seleccionar dónde buscar</li>
+        <li>DecimalField para rangos de precios</li>
+        <li>Validación cruzada entre múltiples campos</li>
+        <li>Uso de GET en lugar de POST para formularios de búsqueda</li>
+    </ul>
+</div>
+
+<form method="get" class="django-form">
+    {% for field in form %}
+        <div class="form-group">
+            {{ field.errors }}
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.help_text %}
+                <div class="help-text">{{ field.help_text }}</div>
+            {% endif %}
+        </div>
+    {% endfor %}
+    
+    <div class="form-actions">
+        <button type="submit" class="btn">🔍 Buscar</button>
+        <a href="{% url 'documentos:search' %}" class="btn btn-secondary">Limpiar</a>
+    </div>
+</form>
+
+{% if query %}
+<div class="search-results">
+    <h3>🎯 Resultados para "{{ query }}"</h3>
+    
+    {% if results %}
+        <div class="results-count">
+            <p>Se encontraron {{ results|length }} resultado{{ results|length|pluralize }}:</p>
+        </div>
+        
+        <div class="results-list">
+            {% for result_type, item in results %}
+                <div class="result-item {{ result_type }}">
+                    {% if result_type == 'car' %}
+                        <div class="result-header">
+                            <h4>🚗 <a href="{% url 'documentos:car_detail' item.pk %}">{{ item.name }}</a></h4>
+                            <span class="result-type">Vehículo</span>
+                        </div>
+                        <p><strong>Precio:</strong> ${{ item.price }}</p>
+                        {% if item.photo %}
+                            <img src="{{ item.photo.url }}" alt="{{ item.name }}" class="result-image">
+                        {% endif %}
+                        
+                    {% elif result_type == 'document' %}
+                        <div class="result-header">
+                            <h4>📄 {{ item.title }}</h4>
+                            <span class="result-type">Documento</span>
+                        </div>
+                        <p><strong>Creado:</strong> {{ item.created_at|date:"d/m/Y H:i" }}</p>
+                        {% if item.file %}
+                            <p><a href="{{ item.file.url }}" target="_blank">📎 Descargar archivo</a></p>
+                        {% endif %}
+                        
+                    {% elif result_type == 'profile' %}
+                        <div class="result-header">
+                            <h4>👤 {{ item.username }}</h4>
+                            <span class="result-type">Perfil</span>
+                        </div>
+                        {% if item.avatar %}
+                            <img src="{{ item.avatar.url }}" alt="Avatar de {{ item.username }}" class="result-avatar">
+                        {% endif %}
+                        {% if item.resume %}
+                            <p><a href="{{ item.resume.url }}" target="_blank">📄 Ver CV</a></p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-results">
+            <p>😔 No se encontraron resultados para tu búsqueda.</p>
+            <p>Intenta con:</p>
+            <ul>
+                <li>Palabras más generales</li>
+                <li>Verificar la ortografía</li>
+                <li>Buscar en todas las categorías</li>
+            </ul>
+        </div>
+    {% endif %}
+</div>
+{% endif %}
+
+<style>
+.search-results {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.results-count {
+    background: #e3f2fd;
+    padding: 10px 15px;
+    border-radius: 6px;
+    margin: 15px 0;
+    border-left: 4px solid #2196f3;
+}
+
+.results-list {
+    display: grid;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.result-item {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-left: 4px solid #ddd;
+}
+
+.result-item.car {
+    border-left-color: #4caf50;
+}
+
+.result-item.document {
+    border-left-color: #ff9800;
+}
+
+.result-item.profile {
+    border-left-color: #2196f3;
+}
+
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 10px;
+}
+
+.result-header h4 {
+    margin: 0;
+}
+
+.result-header a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.result-header a:hover {
+    text-decoration: underline;
+}
+
+.result-type {
+    background: #e0e0e0;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #666;
+}
+
+.result-image {
+    max-width: 150px;
+    height: auto;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.result-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-top: 10px;
+}
+
+.no-results {
+    text-align: center;
+    padding: 40px 20px;
+    background: white;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.no-results ul {
+    text-align: left;
+    display: inline-block;
+    margin-top: 15px;
+}
+</style>
+{% endblock %}
+
+{% block form_help %}
+<div class="form-help">
+    <h4>🔧 Características de este Formulario:</h4>
+    <div class="features-grid">
+        <div class="feature">
+            <h5>Método GET</h5>
+            <p>Los formularios de búsqueda usan GET para que la URL sea bookmarkeable</p>
+        </div>
+        
+        <div class="feature">
+            <h5>ChoiceField</h5>
+            <p>Permite seleccionar dónde buscar con opciones predefinidas</p>
+        </div>
+        
+        <div class="feature">
+            <h5>Validación Cruzada</h5>
+            <p>El método clean() valida que precio_min < precio_max</p>
+        </div>
+        
+        <div class="feature">
+            <h5>Búsqueda Dinámica</h5>
+            <p>Los campos de precio solo se usan cuando busca en vehículos</p>
+        </div>
+    </div>
+</div>
+
+<style>
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.feature {
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+}
+
+.feature h5 {
+    color: #007cba;
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
+.feature p {
+    font-size: 13px;
+    line-height: 1.4;
+    margin: 0;
+}
+</style>
+{% endblock %}

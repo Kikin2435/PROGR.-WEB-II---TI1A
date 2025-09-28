@@ -1,0 +1,97 @@
+{% extends "documentos/cbv/base_cbv.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">🗑️ Confirmar Eliminación</h4>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <div class="display-1 text-danger">⚠️</div>
+                </div>
+                
+                <h5 class="text-center">¿Estás seguro que deseas eliminar este vehículo?</h5>
+                
+                <div class="card mt-3 border-light">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-4">
+                                {% if car.photo %}
+                                    <img src="{{ car.photo.url }}" 
+                                         alt="{{ car.name }}" 
+                                         class="img-thumbnail w-100" 
+                                         style="max-height: 100px; object-fit: cover;">
+                                {% else %}
+                                    <div class="bg-light text-center p-3 rounded">
+                                        <span class="text-muted">🚗</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-8">
+                                <h6 class="mb-1">{{ car.name }}</h6>
+                                <p class="text-success mb-1">
+                                    <strong>${{ car.price }}</strong>
+                                </p>
+                                {% if car.specs %}
+                                    <small class="text-muted">
+                                        📄 Incluye especificaciones
+                                    </small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning mt-3" role="alert">
+                    <strong>⚠️ Advertencia:</strong> Esta acción no se puede deshacer. 
+                    El vehículo y todos sus archivos asociados serán eliminados permanentemente.
+                </div>
+
+                <form method="post" class="mt-4">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <a href="{% url 'car_list_cbv' %}" class="btn btn-secondary me-md-2">
+                            ↩️ Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                            🗑️ Sí, eliminar vehículo
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Información sobre DeleteView -->
+        <div class="card mt-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">💡 Sobre DeleteView</h5>
+            </div>
+            <div class="card-body">
+                <h6>Características de esta implementación:</h6>
+                <ul class="mb-0">
+                    <li><strong>model:</strong> Car - Modelo a eliminar</li>
+                    <li><strong>template_name:</strong> Template de confirmación</li>
+                    <li><strong>success_url:</strong> Redirección después de eliminar</li>
+                    <li><strong>delete():</strong> Método personalizado para agregar mensajes</li>
+                    <li><strong>context_object_name:</strong> 'car' disponible en el template</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Confirmación adicional con JavaScript
+        $('form').on('submit', function(e) {
+            if (!confirm('¿Estás completamente seguro? Esta acción no se puede deshacer.')) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+{% endblock %}

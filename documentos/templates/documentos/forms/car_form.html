@@ -1,0 +1,99 @@
+{% extends 'documentos/forms/base_form.html' %}
+
+{% block form_title %}{{ title }}{% endblock %}
+
+{% block form_header %}🚗 {{ title }}{% endblock %}
+
+{% block form_content %}
+<div class="form-explanation">
+    <p>Este es un <strong>ModelForm</strong> que demuestra:</p>
+    <ul>
+        <li>Formulario generado automáticamente desde el modelo Car</li>
+        <li>ImageField para subir fotos</li>
+        <li>FileField para especificaciones</li>
+        <li>Validación personalizada de precios</li>
+        <li>Labels y help_text personalizados</li>
+    </ul>
+</div>
+
+<form method="post" enctype="multipart/form-data" class="django-form">
+    {% csrf_token %}
+    
+    <!-- Mostrar errores no relacionados con campos específicos -->
+    {{ form.non_field_errors }}
+    
+    <!-- Renderizado manual con mejor control -->
+    <div class="form-group">
+        {{ form.name.errors }}
+        <label for="{{ form.name.id_for_label }}">{{ form.name.label }}:</label>
+        {{ form.name }}
+        {% if form.name.help_text %}
+            <div class="help-text">{{ form.name.help_text }}</div>
+        {% endif %}
+    </div>
+    
+    <div class="form-group">
+        {{ form.price.errors }}
+        <label for="{{ form.price.id_for_label }}">{{ form.price.label }}:</label>
+        {{ form.price }}
+        {% if form.price.help_text %}
+            <div class="help-text">{{ form.price.help_text }}</div>
+        {% endif %}
+    </div>
+    
+    <div class="form-group">
+        {{ form.photo.errors }}
+        <label for="{{ form.photo.id_for_label }}">{{ form.photo.label }}:</label>
+        {{ form.photo }}
+        {% if form.photo.help_text %}
+            <div class="help-text">{{ form.photo.help_text }}</div>
+        {% endif %}
+        {% if car and car.photo %}
+            <div class="current-file">
+                <strong>Archivo actual:</strong> 
+                <a href="{{ car.photo.url }}" target="_blank">{{ car.photo.name }}</a>
+                <br><img src="{{ car.photo.url }}" alt="Foto actual" style="max-width: 200px; margin-top: 10px;">
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="form-group">
+        {{ form.specs.errors }}
+        <label for="{{ form.specs.id_for_label }}">{{ form.specs.label }}:</label>
+        {{ form.specs }}
+        {% if form.specs.help_text %}
+            <div class="help-text">{{ form.specs.help_text }}</div>
+        {% endif %}
+        {% if car and car.specs %}
+            <div class="current-file">
+                <strong>Archivo actual:</strong> 
+                <a href="{{ car.specs.url }}" target="_blank">{{ car.specs.name }}</a>
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="form-actions">
+        <button type="submit" class="btn">{% if car %}Actualizar{% else %}Crear{% endif %} Vehículo</button>
+        <a href="{% url 'documentos:car_list' %}" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+
+<style>
+.current-file {
+    background: #e8f5e8;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 10px;
+    border: 1px solid #c3e6c3;
+}
+
+.current-file a {
+    color: #28a745;
+    text-decoration: none;
+}
+
+.current-file a:hover {
+    text-decoration: underline;
+}
+</style>
+{% endblock %}

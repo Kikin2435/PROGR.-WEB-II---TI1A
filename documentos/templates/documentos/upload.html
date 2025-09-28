@@ -1,0 +1,164 @@
+{% extends 'documentos/base.html' %}
+
+{% block title %}Subir Archivo{% endblock %}
+
+{% block content %}
+<h2>Subir Archivos</h2>
+
+<p>Esta página demuestra diferentes formas de manejar archivos en Django según la documentación oficial.</p>
+
+<!-- Formulario 1: Agregar vehículo con archivos -->
+<div class="upload-form">
+    <h3>1. Agregar Vehículo (con FileField e ImageField)</h3>
+    <form method="post" enctype="multipart/form-data" id="carForm">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="car_name">Nombre del Vehículo:</label>
+            <input type="text" id="car_name" name="car_name" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="car_price">Precio:</label>
+            <input type="number" id="car_price" name="car_price" step="0.01" min="0" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="car_photo">Fotografía (ImageField):</label>
+            <input type="file" id="car_photo" name="car_photo" accept="image/*" required>
+            <small>Se guardará en la carpeta 'cars'</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="car_specs">Especificaciones (FileField):</label>
+            <input type="file" id="car_specs" name="car_specs">
+            <small>Se guardará en la carpeta 'specs'</small>
+        </div>
+        
+        <button type="submit">Agregar Vehículo</button>
+    </form>
+</div>
+
+<!-- Formulario 2: Subida usando default storage directamente -->
+<div class="upload-form">
+    <h3>2. Subida usando Default Storage</h3>
+    <p>Demuestra el uso de <code>default_storage.save()</code></p>
+    <form method="post" enctype="multipart/form-data" id="storageForm">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="default_file">Archivo:</label>
+            <input type="file" id="default_file" name="default_file" required>
+            <small>Se guardará usando default_storage en la carpeta 'uploads'</small>
+        </div>
+        
+        <button type="submit">Subir con Default Storage</button>
+    </form>
+</div>
+
+<!-- Formulario 3: Archivo externo -->
+<div class="upload-form">
+    <h3>3. Importar Archivo Externo</h3>
+    <p>Demuestra cómo guardar un archivo existente del disco a un FileField</p>
+    <form method="post" id="externalForm">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="external_file_path">Ruta del archivo externo:</label>
+            <input type="text" id="external_file_path" name="external_file_path" 
+                   placeholder="C:\ruta\al\archivo.pdf" required>
+            <small>Ruta completa a un archivo existente en el sistema</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="car_name_external">Nombre del Vehículo:</label>
+            <input type="text" id="car_name_external" name="car_name_external" 
+                   value="Vehículo con archivo externo">
+        </div>
+        
+        <div class="form-group">
+            <label for="car_price_external">Precio:</label>
+            <input type="number" id="car_price_external" name="car_price" 
+                   step="0.01" min="0" value="25000.00">
+        </div>
+        
+        <button type="submit">Importar Archivo Externo</button>
+    </form>
+</div>
+
+<!-- Área de resultados -->
+<div id="results" style="margin-top: 20px;"></div>
+
+<div class="alert alert-info">
+    <h4>Ejemplos de Código de la Documentación Django:</h4>
+    <p>Estas formas demuestran los siguientes patrones de la documentación:</p>
+    
+    <h5>1. Usar archivos en modelos:</h5>
+    <pre><code>
+class Car(models.Model):
+    name = models.CharField(max_length=255)
+    price = models.DecimalField(max_digits=5, decimal_places=2)
+    photo = models.ImageField(upload_to="cars")
+    specs = models.FileField(upload_to="specs")
+    </code></pre>
+    
+    <h5>2. Usar default_storage directamente:</h5>
+    <pre><code>
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+
+path = default_storage.save("path/to/file", ContentFile(b"new content"))
+    </code></pre>
+    
+    <h5>3. Guardar archivo externo a FileField:</h5>
+    <pre><code>
+from pathlib import Path
+from django.core.files import File
+
+path = Path("/some/external/specs.pdf")
+car = Car.objects.get(name="57 Chevy")
+with path.open(mode="rb") as f:
+    car.specs = File(f, name=path.name)
+    car.save()
+    </code></pre>
+</div>
+
+<script>
+// Manejar envío de formularios con AJAX
+document.addEventListener('DOMContentLoaded', function() {
+    const forms = ['carForm', 'storageForm', 'externalForm'];
+    const resultsDiv = document.getElementById('results');
+    
+    forms.forEach(formId => {
+        const form = document.getElementById(formId);
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(form);
+                
+                fetch('{% url "documentos:upload_file" %}', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    let alertClass = data.success ? 'alert-success' : 'alert-error';
+                    let message = data.success ? data.message : data.error;
+                    
+                    resultsDiv.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
+                    
+                    if (data.success) {
+                        form.reset();
+                        // Recargar la página después de 2 segundos para ver los cambios
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    }
+                })
+                .catch(error => {
+                    resultsDiv.innerHTML = `<div class="alert alert-error">Error: ${error}</div>`;
+                });
+            });
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,307 @@
+{% extends 'documentos/base.html' %}
+
+{% block title %}Upload con Modelo - Django Demo{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">🗃️ Upload con ModelForm</h4>
+                    <p class="mb-0">Guardado automático usando FileField del modelo</p>
+                </div>
+                <div class="card-body">
+                    <div class="explanation">
+                        <h5>🔍 Qué demuestra este ejemplo:</h5>
+                        <ul>
+                            <li><code>ModelForm</code> - Formulario basado en modelo</li>
+                            <li><code>form.save()</code> - Guardado automático de archivos</li>
+                            <li><code>upload_to</code> - Organización automática de archivos</li>
+                            <li>Integración directa con base de datos</li>
+                            <li>Metadatos automáticos (fecha, tamaño, etc.)</li>
+                        </ul>
+                    </div>
+
+                    <form method="post" enctype="multipart/form-data" class="upload-form">
+                        {% csrf_token %}
+                        
+                        <div class="form-group">
+                            {{ form.title.errors }}
+                            <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+                            {{ form.title }}
+                            <small class="form-text text-muted">{{ form.title.help_text }}</small>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.file.errors }}
+                            <label for="{{ form.file.id_for_label }}">{{ form.file.label }}</label>
+                            {{ form.file }}
+                            <small class="form-text text-muted">{{ form.file.help_text }}</small>
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-database"></i> Guardar en Modelo
+                        </button>
+                        
+                        <a href="{% url 'documentos:upload_index' %}" class="btn btn-secondary btn-lg ml-2">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                    </form>
+
+                    <div class="code-example mt-4">
+                        <h5>💻 Código Python correspondiente:</h5>
+                        <pre><code class="python"># ModelForm automáticamente maneja FileField
+def upload_file(request):
+    if request.method == "POST":
+        form = ModelFormWithFileField(request.POST, request.FILES)
+        if form.is_valid():
+            # El archivo se guarda automáticamente
+            form.save()
+            return HttpResponseRedirect("/success/url/")
+    else:
+        form = ModelFormWithFileField()
+    return render(request, "upload.html", {"form": form})
+
+# models.py
+class Document(models.Model):
+    title = models.CharField(max_length=200)
+    file = models.FileField(upload_to="documents")
+    created_at = models.DateTimeField(auto_now_add=True)</code></pre>
+                    </div>
+
+                    <div class="model-info mt-4">
+                        <h5>🏗️ Estructura del Modelo:</h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Campo</th>
+                                        <th>Tipo</th>
+                                        <th>Descripción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code>title</code></td>
+                                        <td>CharField</td>
+                                        <td>Título descriptivo del documento</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>file</code></td>
+                                        <td>FileField</td>
+                                        <td>Archivo - se guarda en "documents/"</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>created_at</code></td>
+                                        <td>DateTimeField</td>
+                                        <td>Fecha de creación automática</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="advantages mt-4">
+                        <h5>✅ Ventajas del ModelForm:</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <strong>Automático:</strong> No necesitas manejar archivos manualmente
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Validación:</strong> Usa las validaciones del modelo
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Metadatos:</strong> Guarda información adicional automáticamente
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <strong>Organización:</strong> Archivos organizados por upload_to
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Integridad:</strong> Transaccional con la base de datos
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Mantenimiento:</strong> Fácil de mantener y extender
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-diagram mt-4">
+                        <h5>🔄 Flujo de Procesamiento:</h5>
+                        <div class="flow-steps">
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h6>Usuario sube archivo</h6>
+                                    <p>Formulario con enctype="multipart/form-data"</p>
+                                </div>
+                            </div>
+                            <div class="arrow">→</div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h6>ModelForm.is_valid()</h6>
+                                    <p>Validación automática de campos</p>
+                                </div>
+                            </div>
+                            <div class="arrow">→</div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h6>form.save()</h6>
+                                    <p>Guardado automático en modelo y disco</p>
+                                </div>
+                            </div>
+                            <div class="arrow">→</div>
+                            <div class="step">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <h6>Confirmación</h6>
+                                    <p>Archivo guardado y metadatos en BD</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.upload-form {
+    background: #f1f8f1;
+    padding: 30px;
+    border-radius: 8px;
+    margin: 20px 0;
+    border-left: 4px solid #28a745;
+}
+
+.upload-form input[type="text"] {
+    border: 2px solid #28a745;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 16px;
+}
+
+.upload-form input[type="file"] {
+    border: 2px dashed #28a745;
+    border-radius: 8px;
+    padding: 20px;
+    background: #f8fff8;
+    width: 100%;
+}
+
+.upload-form input[type="file"]:hover {
+    border-color: #1e7e34;
+    background: #e8f5e8;
+}
+
+.code-example {
+    background: #282c34;
+    color: #abb2bf;
+    padding: 20px;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    overflow-x: auto;
+}
+
+.explanation {
+    background: #e8f5e8;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #28a745;
+    margin-bottom: 25px;
+}
+
+.model-info {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #6c757d;
+}
+
+.advantages {
+    background: #e8f4f8;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #17a2b8;
+}
+
+.flow-diagram {
+    background: #fff3cd;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #ffc107;
+}
+
+.flow-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.step {
+    text-align: center;
+    min-width: 150px;
+}
+
+.step-number {
+    background: #ffc107;
+    color: #212529;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin: 0 auto 10px;
+}
+
+.step-content h6 {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.step-content p {
+    font-size: 12px;
+    color: #666;
+    margin: 0;
+}
+
+.arrow {
+    font-size: 24px;
+    color: #ffc107;
+    font-weight: bold;
+}
+
+.list-group-item {
+    border: none;
+    padding: 8px 0;
+    background: transparent;
+}
+
+@media (max-width: 768px) {
+    .flow-steps {
+        flex-direction: column;
+    }
+    
+    .arrow {
+        transform: rotate(90deg);
+    }
+}
+</style>
+{% endblock %}

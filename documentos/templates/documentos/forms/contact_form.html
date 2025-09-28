@@ -1,0 +1,71 @@
+{% extends 'documentos/forms/base_form.html' %}
+
+{% block form_title %}Formulario de Contacto{% endblock %}
+
+{% block form_header %}📧 Formulario de Contacto{% endblock %}
+
+{% block form_content %}
+<div class="form-explanation">
+    <p>Este formulario demuestra:</p>
+    <ul>
+        <li>Diferentes tipos de campos (CharField, EmailField, BooleanField)</li>
+        <li>Widget personalizado (Textarea para el mensaje)</li>
+        <li>Validación personalizada en clean_subject()</li>
+        <li>Manejo de datos en la vista</li>
+    </ul>
+</div>
+
+<form method="post" class="django-form">
+    {% csrf_token %}
+    
+    <!-- Renderizado usando loop sobre campos -->
+    {% for field in form %}
+        <div class="form-group">
+            {{ field.errors }}
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.help_text %}
+                <div class="help-text">{{ field.help_text }}</div>
+            {% endif %}
+        </div>
+    {% endfor %}
+    
+    <div class="form-actions">
+        <button type="submit" class="btn">Enviar Mensaje</button>
+        <a href="{% url 'documentos:form_examples' %}" class="btn btn-secondary">Volver</a>
+    </div>
+</form>
+
+<!-- Demostración de acceso a propiedades del formulario -->
+<div class="technical-info">
+    <h4>🔍 Propiedades del Formulario</h4>
+    <table class="form-properties-table">
+        <tr><td>Estado:</td><td>{{ form.is_bound|yesno:"Bound,Unbound" }}</td></tr>
+        {% if form.is_bound %}
+            <tr><td>Válido:</td><td>{{ form.is_valid|yesno:"Sí,No" }}</td></tr>
+        {% endif %}
+        <tr><td>Número de campos:</td><td>{{ form|length }}</td></tr>
+        <tr><td>Campos visibles:</td><td>{{ form.visible_fields|length }}</td></tr>
+        <tr><td>Campos ocultos:</td><td>{{ form.hidden_fields|length }}</td></tr>
+    </table>
+</div>
+
+<style>
+.form-properties-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+}
+
+.form-properties-table td {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+}
+
+.form-properties-table td:first-child {
+    background: #f5f5f5;
+    font-weight: bold;
+    width: 200px;
+}
+</style>
+{% endblock %}

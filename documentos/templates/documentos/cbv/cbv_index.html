@@ -1,0 +1,268 @@
+{% extends "documentos/cbv/base_cbv.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="jumbotron bg-primary text-white rounded p-5 mb-5">
+            <h1 class="display-4">🎓 Django Class-Based Views</h1>
+            <p class="lead">
+                Implementación completa de las vistas basadas en clases siguiendo la documentación oficial de Django.
+                Ejemplos prácticos de FormView, CreateView, UpdateView, DeleteView, ListView y mixins.
+            </p>
+            <hr class="my-4" style="border-color: rgba(255,255,255,0.3);">
+            <p>
+                Explora todos los ejemplos implementados y aprende cómo usar las vistas basadas en clases de Django
+                para crear aplicaciones web más eficientes y mantenibles.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- FormView -->
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 border-primary">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">📧 FormView</h5>
+            </div>
+            <div class="card-body">
+                <h6 class="card-title">Formulario de Contacto</h6>
+                <p class="card-text">
+                    Ejemplo básico de FormView con validaciones personalizadas, 
+                    manejo de éxito y contexto adicional.
+                </p>
+                <ul class="list-unstyled small">
+                    <li>✅ template_name</li>
+                    <li>✅ form_class</li>
+                    <li>✅ success_url</li>
+                    <li>✅ form_valid()</li>
+                </ul>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'contact_form_cbv' %}" class="btn btn-primary btn-sm">
+                    🚀 Probar FormView
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ListView -->
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 border-success">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">📋 ListView</h5>
+            </div>
+            <div class="card-body">
+                <h6 class="card-title">Lista de Vehículos</h6>
+                <p class="card-text">
+                    ListView con paginación, queryset personalizado y 
+                    contexto adicional. Ordenado por precio.
+                </p>
+                <ul class="list-unstyled small">
+                    <li>✅ model</li>
+                    <li>✅ paginate_by</li>
+                    <li>✅ get_queryset()</li>
+                    <li>✅ context_object_name</li>
+                </ul>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'car_list_cbv' %}" class="btn btn-success btn-sm">
+                    🚀 Ver ListView
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- CreateView -->
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 border-info">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">➕ CreateView</h5>
+            </div>
+            <div class="card-body">
+                <h6 class="card-title">Crear Vehículo</h6>
+                <p class="card-text">
+                    CreateView con LoginRequiredMixin, formulario personalizado
+                    y manejo de archivos (imagen y documentos).
+                </p>
+                <ul class="list-unstyled small">
+                    <li>✅ LoginRequiredMixin</li>
+                    <li>✅ form_class</li>
+                    <li>✅ File uploads</li>
+                    <li>✅ Messages framework</li>
+                </ul>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'car_create_cbv' %}" class="btn btn-info btn-sm">
+                    🚀 Probar CreateView
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- UpdateView -->
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 border-warning">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">✏️ UpdateView</h5>
+            </div>
+            <div class="card-body">
+                <h6 class="card-title">Actualizar Vehículo</h6>
+                <p class="card-text">
+                    UpdateView que comparte template con CreateView,
+                    muestra archivos existentes y permite actualizarlos.
+                </p>
+                <ul class="list-unstyled small">
+                    <li>✅ Shared template</li>
+                    <li>✅ File preview</li>
+                    <li>✅ Authentication</li>
+                    <li>✅ Dynamic context</li>
+                </ul>
+            </div>
+            <div class="card-footer">
+                <small class="text-muted">Requiere vehículo existente</small><br>
+                <a href="{% url 'car_list_cbv' %}" class="btn btn-warning btn-sm">
+                    🚀 Ir a Lista
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- DeleteView -->
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">🗑️ DeleteView</h5>
+            </div>
+            <div class="card-body">
+                <h6 class="card-title">Eliminar Vehículo</h6>
+                <p class="card-text">
+                    DeleteView con confirmación, preview del objeto
+                    y mensajes de confirmación personalizados.
+                </p>
+                <ul class="list-unstyled small">
+                    <li>✅ Confirmation template</li>
+                    <li>✅ Custom delete()</li>
+                    <li>✅ Object preview</li>
+                    <li>✅ Safety measures</li>
+                </ul>
+            </div>
+            <div class="card-footer">
+                <small class="text-muted">Requiere vehículo existente</small><br>
+                <a href="{% url 'car_list_cbv' %}" class="btn btn-danger btn-sm">
+                    🚀 Ir a Lista
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- AJAX Mixins -->
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 border-secondary">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">🔄 AJAX Mixins</h5>
+            </div>
+            <div class="card-body">
+                <h6 class="card-title">Content Negotiation</h6>
+                <p class="card-text">
+                    JSONResponseMixin y AjaxableResponseMixin para
+                    manejar requests HTTP y AJAX en la misma vista.
+                </p>
+                <ul class="list-unstyled small">
+                    <li>✅ JSONResponseMixin</li>
+                    <li>✅ AjaxableResponseMixin</li>
+                    <li>✅ X-Requested-With detection</li>
+                    <li>✅ Error handling</li>
+                </ul>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'car_create_ajax' %}" class="btn btn-secondary btn-sm">
+                    🚀 Probar AJAX
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Información adicional -->
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h4 class="mb-0">📚 Características Implementadas</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>🎯 Vistas Básicas</h6>
+                        <ul class="list-unstyled">
+                            <li>✅ <strong>FormView:</strong> Formularios genéricos</li>
+                            <li>✅ <strong>ListView:</strong> Listas paginadas</li>
+                            <li>✅ <strong>CreateView:</strong> Creación de objetos</li>
+                            <li>✅ <strong>UpdateView:</strong> Actualización de objetos</li>
+                            <li>✅ <strong>DeleteView:</strong> Eliminación con confirmación</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>🔧 Funcionalidades Avanzadas</h6>
+                        <ul class="list-unstyled">
+                            <li>✅ <strong>Mixins:</strong> LoginRequiredMixin, JSONResponseMixin</li>
+                            <li>✅ <strong>File Uploads:</strong> Imágenes y documentos</li>
+                            <li>✅ <strong>Authentication:</strong> Control de acceso</li>
+                            <li>✅ <strong>Messages:</strong> Feedback de usuario</li>
+                            <li>✅ <strong>AJAX:</strong> Content negotiation</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="row">
+                    <div class="col-12">
+                        <h6>🌐 URLs Disponibles</h6>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <code class="small">
+                                    /cbv/contact/<br>
+                                    /cbv/cars/<br>
+                                    /cbv/cars/create/
+                                </code>
+                            </div>
+                            <div class="col-md-4">
+                                <code class="small">
+                                    /cbv/cars/&lt;pk&gt;/update/<br>
+                                    /cbv/cars/&lt;pk&gt;/delete/<br>
+                                    /cbv/cars/create/ajax/
+                                </code>
+                            </div>
+                            <div class="col-md-4">
+                                <code class="small">
+                                    /cbv/cars/&lt;pk&gt;/update/ajax/<br>
+                                    /cbv/contact/success/<br>
+                                </code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enlaces de navegación -->
+<div class="row mt-4">
+    <div class="col-12 text-center">
+        <div class="btn-group" role="group">
+            <a href="{% url 'index' %}" class="btn btn-outline-secondary">
+                🏠 Vistas Funcionales
+            </a>
+            <a href="{% url 'upload_index' %}" class="btn btn-outline-primary">
+                📁 File Uploads
+            </a>
+            <a href="{% url 'form_examples' %}" class="btn btn-outline-info">
+                📝 Forms Examples
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

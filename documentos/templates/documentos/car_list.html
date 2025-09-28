@@ -1,0 +1,56 @@
+{% extends 'documentos/base.html' %}
+
+{% block title %}Lista de Vehículos{% endblock %}
+
+{% block content %}
+<h2>Lista de Vehículos</h2>
+
+{% if cars %}
+    <div class="cars-grid">
+        {% for car in cars %}
+            <div class="car-item">
+                <h3><a href="{% url 'documentos:car_detail' car.pk %}">{{ car.name }}</a></h3>
+                <p><strong>Precio:</strong> ${{ car.price }}</p>
+                
+                {% if car.photo %}
+                    <div class="car-photo-container">
+                        <img src="{{ car.photo.url }}" alt="{{ car.name }}" class="car-photo">
+                        <p><small>Archivo: {{ car.photo.name }}</small></p>
+                    </div>
+                {% else %}
+                    <p><em>Sin fotografía</em></p>
+                {% endif %}
+                
+                {% if car.specs %}
+                    <p><a href="{{ car.specs.url }}" target="_blank">📄 Ver Especificaciones</a></p>
+                {% else %}
+                    <p><em>Sin especificaciones</em></p>
+                {% endif %}
+                
+                <p><a href="{% url 'documentos:car_detail' car.pk %}" class="btn">Ver Detalles</a></p>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No hay vehículos registrados en el sistema.</p>
+    <p><a href="{% url 'documentos:upload_file' %}">Agregar un vehículo</a></p>
+{% endif %}
+
+<div class="actions">
+    <p><a href="{% url 'documentos:upload_file' %}" class="btn">➕ Agregar Nuevo Vehículo</a></p>
+</div>
+
+<style>
+.cars-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.car-photo-container {
+    text-align: center;
+    margin: 10px 0;
+}
+</style>
+{% endblock %}

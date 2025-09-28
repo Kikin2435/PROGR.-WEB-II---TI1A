@@ -1,0 +1,70 @@
+{% extends 'documentos/base.html' %}
+
+{% block title %}Detalle de {{ car.name }}{% endblock %}
+
+{% block content %}
+<h2>{{ car.name }}</h2>
+
+<div class="car-detail">
+    <p><strong>Precio:</strong> ${{ car.price }}</p>
+    
+    {% if car.photo %}
+        <div class="file-info">
+            <h3>Fotografía del Vehículo</h3>
+            <img src="{{ car.photo.url }}" alt="{{ car.name }}" style="max-width: 400px; height: auto;">
+            
+            <h4>Información del archivo de imagen:</h4>
+            <ul>
+                <li><strong>Nombre:</strong> {{ file_info.photo.name }}</li>
+                {% if file_info.photo.path %}
+                    <li><strong>Ruta:</strong> {{ file_info.photo.path }}</li>
+                {% endif %}
+                <li><strong>URL:</strong> <a href="{{ file_info.photo.url }}" target="_blank">{{ file_info.photo.url }}</a></li>
+                <li><strong>Tamaño:</strong> {{ file_info.photo.size }} bytes</li>
+                {% if file_info.photo.width %}
+                    <li><strong>Dimensiones:</strong> {{ file_info.photo.width }}x{{ file_info.photo.height }} px</li>
+                {% endif %}
+            </ul>
+        </div>
+    {% else %}
+        <p><em>No hay fotografía disponible.</em></p>
+    {% endif %}
+    
+    {% if car.specs %}
+        <div class="file-info">
+            <h3>Especificaciones</h3>
+            <p><a href="{{ car.specs.url }}" target="_blank" class="btn">Descargar Especificaciones</a></p>
+            
+            <h4>Información del archivo de especificaciones:</h4>
+            <ul>
+                <li><strong>Nombre:</strong> {{ file_info.specs.name }}</li>
+                {% if file_info.specs.path %}
+                    <li><strong>Ruta:</strong> {{ file_info.specs.path }}</li>
+                {% endif %}
+                <li><strong>URL:</strong> <a href="{{ file_info.specs.url }}" target="_blank">{{ file_info.specs.url }}</a></li>
+                <li><strong>Tamaño:</strong> {{ file_info.specs.size }} bytes</li>
+            </ul>
+        </div>
+    {% else %}
+        <p><em>No hay especificaciones disponibles.</em></p>
+    {% endif %}
+</div>
+
+<div class="alert alert-info">
+    <h4>Ejemplo de uso de la API de archivos de Django:</h4>
+    <p>Esta vista demuestra cómo acceder a los atributos de archivo como se describe en la documentación:</p>
+    <pre><code>
+# Obtener el objeto Car
+car = Car.objects.get(name="{{ car.name }}")
+
+# Acceder a los atributos del archivo
+car.photo.name     # {{ file_info.photo.name|default:"N/A" }}
+car.photo.url      # {{ file_info.photo.url|default:"N/A" }}
+car.photo.size     # {{ file_info.photo.size|default:"N/A" }} bytes
+{% if file_info.photo.width %}car.photo.width    # {{ file_info.photo.width }}{% endif %}
+{% if file_info.photo.height %}car.photo.height   # {{ file_info.photo.height }}{% endif %}
+    </code></pre>
+</div>
+
+<p><a href="{% url 'documentos:car_list' %}">&larr; Volver a la lista de vehículos</a></p>
+{% endblock %}

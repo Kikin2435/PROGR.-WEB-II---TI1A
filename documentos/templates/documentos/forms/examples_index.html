@@ -1,0 +1,188 @@
+{% extends 'documentos/forms/base_form.html' %}
+
+{% block form_title %}Ejemplos de Formularios{% endblock %}
+
+{% block form_header %}🔖 Ejemplos de Formularios en Django{% endblock %}
+
+{% block form_content %}
+<div class="examples-grid">
+    <div class="example-card">
+        <h3>1. Formulario Básico (NameForm)</h3>
+        <p>Ejemplo simple de la documentación de Django con un solo campo CharField.</p>
+        <ul>
+            <li>Un campo de texto básico</li>
+            <li>Validación de longitud máxima</li>
+            <li>Manejo GET/POST</li>
+        </ul>
+        <a href="{% url 'documentos:name_form' %}" class="btn">Probar NameForm</a>
+    </div>
+    
+    <div class="example-card">
+        <h3>2. Formulario de Contacto</h3>
+        <p>Formulario más complejo con diferentes tipos de campos y validaciones.</p>
+        <ul>
+            <li>CharField, EmailField, BooleanField</li>
+            <li>Widget personalizado (Textarea)</li>
+            <li>Validación personalizada</li>
+        </ul>
+        <a href="{% url 'documentos:contact_form' %}" class="btn">Probar ContactForm</a>
+    </div>
+    
+    <div class="example-card">
+        <h3>3. ModelForm - Crear Vehículo</h3>
+        <p>Formulario basado en modelo con FileField e ImageField.</p>
+        <ul>
+            <li>Formulario generado desde modelo</li>
+            <li>Manejo de archivos</li>
+            <li>Labels y help_text personalizados</li>
+        </ul>
+        <a href="{% url 'documentos:create_car' %}" class="btn">Crear Vehículo</a>
+    </div>
+    
+    <div class="example-card">
+        <h3>4. Formulario de Documento</h3>
+        <p>Subida de documentos con validación de tipos de archivo.</p>
+        <ul>
+            <li>FileField con restricciones</li>
+            <li>Placeholders personalizados</li>
+            <li>Validación de archivos</li>
+        </ul>
+        <a href="{% url 'documentos:create_document' %}" class="btn">Subir Documento</a>
+    </div>
+    
+    <div class="example-card">
+        <h3>5. Formulario de Perfil</h3>
+        <p>Creación de perfil con avatar y currículum.</p>
+        <ul>
+            <li>Imagen de perfil</li>
+            <li>Archivo PDF</li>
+            <li>Validación de unicidad</li>
+        </ul>
+        <a href="{% url 'documentos:create_profile' %}" class="btn">Crear Perfil</a>
+    </div>
+    
+    <div class="example-card">
+        <h3>6. Formulario de Búsqueda</h3>
+        <p>Búsqueda avanzada con múltiples campos y validación cruzada.</p>
+        <ul>
+            <li>ChoiceField</li>
+            <li>DecimalField</li>
+            <li>Validación de múltiples campos</li>
+        </ul>
+        <a href="{% url 'documentos:search' %}" class="btn">Buscar</a>
+    </div>
+    
+    <div class="example-card">
+        <h3>7. Formulario Dinámico</h3>
+        <p>Campos que aparecen/desaparecen según parámetros.</p>
+        <ul>
+            <li>Campos condicionales</li>
+            <li>Inicialización personalizada</li>
+            <li>Lógica dinámica</li>
+        </ul>
+        <a href="{% url 'documentos:dynamic_form' %}" class="btn">Formulario Dinámico</a>
+        <a href="{% url 'documentos:dynamic_form' %}?advanced=true" class="btn btn-secondary">Modo Avanzado</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block form_help %}
+<div class="form-help">
+    <h4>🔧 Conceptos Demostrados:</h4>
+    <div class="concepts-grid">
+        <div class="concept">
+            <h5>Form vs ModelForm</h5>
+            <p><strong>Form:</strong> Creado manualmente, máximo control<br>
+            <strong>ModelForm:</strong> Generado desde modelo, menos código</p>
+        </div>
+        
+        <div class="concept">
+            <h5>Validación</h5>
+            <p><strong>is_valid():</strong> Ejecuta todas las validaciones<br>
+            <strong>cleaned_data:</strong> Datos validados y convertidos</p>
+        </div>
+        
+        <div class="concept">
+            <h5>Widgets</h5>
+            <p><strong>TextInput:</strong> Campo de texto simple<br>
+            <strong>Textarea:</strong> Área de texto multilínea<br>
+            <strong>FileInput:</strong> Subida de archivos</p>
+        </div>
+        
+        <div class="concept">
+            <h5>Manejo GET/POST</h5>
+            <p><strong>GET:</strong> Mostrar formulario vacío<br>
+            <strong>POST:</strong> Procesar datos enviados</p>
+        </div>
+    </div>
+</div>
+
+<style>
+.examples-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.example-card {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.example-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.example-card h3 {
+    color: #007cba;
+    margin-top: 0;
+}
+
+.example-card ul {
+    font-size: 14px;
+    color: #666;
+}
+
+.concepts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.concept {
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+}
+
+.concept h5 {
+    color: #007cba;
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+
+.concept p {
+    font-size: 13px;
+    line-height: 1.4;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .examples-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .concepts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

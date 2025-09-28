@@ -1,0 +1,352 @@
+{% extends 'documentos/base.html' %}
+
+{% block title %}Upload Múltiple - Django Demo{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">📋 Upload Múltiples Archivos</h4>
+                    <p class="mb-0">Widget personalizado para selección múltiple</p>
+                </div>
+                <div class="card-body">
+                    <div class="explanation">
+                        <h5>🔍 Qué demuestra este ejemplo:</h5>
+                        <ul>
+                            <li><code>MultipleFileInput</code> - Widget que permite selección múltiple</li>
+                            <li><code>MultipleFileField</code> - Campo que procesa listas de archivos</li>
+                            <li><code>allow_multiple_selected = True</code> - Habilitación de selección múltiple</li>
+                            <li>Validación conjunta de múltiples archivos</li>
+                            <li>Procesamiento individual en vista</li>
+                        </ul>
+                    </div>
+
+                    <form method="post" enctype="multipart/form-data" class="upload-form">
+                        {% csrf_token %}
+                        
+                        <div class="form-group">
+                            {{ form.title.errors }}
+                            <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+                            {{ form.title }}
+                            <small class="form-text text-muted">{{ form.title.help_text }}</small>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.file_field.errors }}
+                            <label for="{{ form.file_field.id_for_label }}">{{ form.file_field.label }}</label>
+                            {{ form.file_field }}
+                            <small class="form-text text-muted">{{ form.file_field.help_text }}</small>
+                            <div class="selection-tip">
+                                📝 <strong>Tip:</strong> Mantén presionada la tecla <kbd>Ctrl</kbd> (o <kbd>Cmd</kbd> en Mac) 
+                                para seleccionar múltiples archivos
+                            </div>
+                        </div>
+
+                        <div class="files-preview" id="filesPreview" style="display: none;">
+                            <h6>📊 Archivos seleccionados:</h6>
+                            <div id="filesList"></div>
+                            <div class="total-info">
+                                <strong>Total de archivos:</strong> <span id="totalFiles">0</span><br>
+                                <strong>Tamaño total:</strong> <span id="totalSize">0 bytes</span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-info btn-lg">
+                            <i class="fas fa-upload"></i> Subir Múltiples Archivos
+                        </button>
+                        
+                        <a href="{% url 'documentos:upload_index' %}" class="btn btn-secondary btn-lg ml-2">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                    </form>
+
+                    <div class="code-example mt-4">
+                        <h5>💻 Código Python correspondiente:</h5>
+                        <pre><code class="python"># Widget personalizado
+class MultipleFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
+
+# Campo personalizado
+class MultipleFileField(forms.FileField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("widget", MultipleFileInput())
+        super().__init__(*args, **kwargs)
+
+    def clean(self, data, initial=None):
+        single_file_clean = super().clean
+        if isinstance(data, (list, tuple)):
+            result = [single_file_clean(d, initial) for d in data]
+        else:
+            result = [single_file_clean(data, initial)]
+        return result
+
+# Vista que procesa múltiples archivos
+def form_valid(self, form):
+    files = form.cleaned_data["file_field"]
+    for f in files:
+        # Procesar cada archivo individualmente
+        ...</code></pre>
+                    </div>
+
+                    <div class="limitations mt-4">
+                        <h5>⚠️ Limitaciones y Consideraciones:</h5>
+                        <div class="alert alert-warning">
+                            <ul class="mb-0">
+                                <li><strong>Máximo 10 archivos</strong> por formulario</li>
+                                <li><strong>Tamaño total máximo:</strong> 50MB</li>
+                                <li><strong>Un solo FileField por modelo:</strong> No se pueden guardar múltiples archivos en un campo de modelo</li>
+                                <li><strong>Procesamiento individual:</strong> Cada archivo se valida y procesa por separado</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="technical-details mt-4">
+                        <h5>🔧 Detalles Técnicos:</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="tech-card">
+                                    <h6>Widget personalizado</h6>
+                                    <p>Extiende <code>ClearableFileInput</code> con <code>allow_multiple_selected = True</code></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="tech-card">
+                                    <h6>Campo personalizado</h6>
+                                    <p>Sobrescribe <code>clean()</code> para procesar listas de archivos</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="tech-card">
+                                    <h6>Validación</h6>
+                                    <p>Aplica validaciones de <code>FileField</code> a cada archivo individualmente</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="tech-card">
+                                    <h6>Procesamiento</h6>
+                                    <p>La vista recibe una lista en <code>form.cleaned_data</code></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.querySelector('input[type="file"][multiple]');
+    const filesPreview = document.getElementById('filesPreview');
+    const filesList = document.getElementById('filesList');
+    const totalFiles = document.getElementById('totalFiles');
+    const totalSize = document.getElementById('totalSize');
+
+    fileInput.addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+        
+        if (files.length > 0) {
+            displayFiles(files);
+            filesPreview.style.display = 'block';
+        } else {
+            filesPreview.style.display = 'none';
+        }
+    });
+
+    function displayFiles(files) {
+        filesList.innerHTML = '';
+        let totalSizeBytes = 0;
+
+        files.forEach((file, index) => {
+            totalSizeBytes += file.size;
+            
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.innerHTML = `
+                <div class="file-icon">📄</div>
+                <div class="file-info">
+                    <div class="file-name">${file.name}</div>
+                    <div class="file-meta">${formatFileSize(file.size)} - ${file.type || 'Tipo desconocido'}</div>
+                </div>
+                <div class="file-status">✓</div>
+            `;
+            filesList.appendChild(fileItem);
+        });
+
+        totalFiles.textContent = files.length;
+        totalSize.textContent = formatFileSize(totalSizeBytes);
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+});
+</script>
+
+<style>
+.upload-form {
+    background: #f0f8ff;
+    padding: 30px;
+    border-radius: 8px;
+    margin: 20px 0;
+    border-left: 4px solid #17a2b8;
+}
+
+.upload-form input[type="text"] {
+    border: 2px solid #17a2b8;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 16px;
+}
+
+.upload-form input[type="file"] {
+    border: 2px dashed #17a2b8;
+    border-radius: 8px;
+    padding: 20px;
+    background: #f1f8ff;
+    width: 100%;
+}
+
+.upload-form input[type="file"]:hover {
+    border-color: #117a8b;
+    background: #e3f2fd;
+}
+
+.selection-tip {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 4px;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.selection-tip kbd {
+    background: #343a40;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.files-preview {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #e9ecef;
+    transition: background-color 0.2s;
+}
+
+.file-item:hover {
+    background: #f8f9fa;
+}
+
+.file-item:last-child {
+    border-bottom: none;
+}
+
+.file-icon {
+    font-size: 24px;
+    margin-right: 15px;
+    color: #17a2b8;
+}
+
+.file-info {
+    flex: 1;
+}
+
+.file-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.file-meta {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.file-status {
+    color: #28a745;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.total-info {
+    background: #e8f4f8;
+    padding: 15px;
+    border-radius: 6px;
+    margin-top: 15px;
+    border-left: 4px solid #17a2b8;
+}
+
+.code-example {
+    background: #282c34;
+    color: #abb2bf;
+    padding: 20px;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    overflow-x: auto;
+}
+
+.explanation {
+    background: #e8f4f8;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #17a2b8;
+    margin-bottom: 25px;
+}
+
+.technical-details {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #6c757d;
+}
+
+.tech-card {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 15px;
+    height: 100%;
+}
+
+.tech-card h6 {
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.tech-card p {
+    font-size: 14px;
+    color: #6c757d;
+    margin: 0;
+}
+
+.tech-card code {
+    background: #f8f9fa;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 12px;
+}
+</style>
+{% endblock %}

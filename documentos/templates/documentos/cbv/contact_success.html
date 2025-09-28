@@ -1,0 +1,47 @@
+{% extends "documentos/cbv/base_cbv.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-success">
+            <div class="card-header bg-success text-white text-center">
+                <h3 class="mb-0">🎉 ¡Mensaje Enviado!</h3>
+            </div>
+            <div class="card-body text-center">
+                <div class="mb-4">
+                    <div class="display-1 text-success">✅</div>
+                </div>
+                
+                <h5 class="card-title">¡Gracias por contactarnos!</h5>
+                <p class="card-text">
+                    Tu mensaje ha sido enviado correctamente. Nos pondremos en contacto contigo 
+                    a la brevedad posible.
+                </p>
+                
+                <div class="d-grid gap-2 d-md-block">
+                    <a href="{% url 'contact_form_cbv' %}" class="btn btn-primary">
+                        📧 Enviar otro mensaje
+                    </a>
+                    <a href="{% url 'index' %}" class="btn btn-outline-secondary">
+                        🏠 Volver al inicio
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información técnica -->
+        <div class="card mt-4">
+            <div class="card-header bg-light">
+                <h6 class="mb-0">🔧 Detalles Técnicos</h6>
+            </div>
+            <div class="card-body">
+                <small class="text-muted">
+                    <strong>Vista:</strong> ContactFormView (FormView)<br>
+                    <strong>success_url:</strong> reverse_lazy('contact_success')<br>
+                    <strong>Método:</strong> form_valid() procesó el formulario exitosamente
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
