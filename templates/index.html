@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Estados y Municipios</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Selecciona un Estado</h1>
+
+    <label for="estado">Estado:</label>
+    <select id="estado">
+        <option value="">-- Selecciona un estado --</option>
+        {% for estado in estados %}
+            <option value="{{ estado.id }}">{{ estado.nombre }}</option>
+        {% endfor %}
+    </select>
+
+    <br><br>
+
+    <label for="municipio">Municipio:</label>
+    <select id="municipio">
+        <option value="">-- Selecciona un municipio --</option>
+    </select>
+
+    <script>
+        $('#estado').change(function() {
+            let estadoId = $(this).val();
+            $('#municipio').empty().append('<option value="">Cargando...</option>');
+
+            if (estadoId) {
+                $.ajax({
+                    url: "{% url 'get_municipios' %}",
+                    data: {
+                        'estado_id': estadoId
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#municipio').empty().append('<option value="">-- Selecciona un municipio --</option>');
+                        $.each(data, function(index, municipio) {
+                            $('#municipio').append('<option value="' + municipio.id + '">' + municipio.nombre + '</option>');
+                        });
+                    }
+                });
+            } else {
+                $('#municipio').empty().append('<option value="">-- Selecciona un municipio --</option>');
+            }
+        });
+    </script>
+</body>
+</html>
